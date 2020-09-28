@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Gzipper
 {
 	[UsedImplicitly]
-	public class FileProvider : IFileProvider
+	public class FileService : IFileService
 	{
 		public bool IsFileExist(string path)
 		{

@@ -8,20 +8,20 @@ namespace Gzipper.Unit.Tests
 {
 	public class InputParser_Test
 	{
-		private IFileProvider fileProvider;
+		private IFileService _fileService;
 		private InputParser testObj;
 
 		[SetUp]
 		public void SetUp()
 		{
-			fileProvider = Substitute.For<IFileProvider>();
-			testObj = new InputParser(fileProvider);
+			_fileService = Substitute.For<IFileService>();
+			testObj = new InputParser(_fileService);
 		}
 
 		[Test]
 		public void InputParse_WhenWrongCountArgument_ShouldReturnError()
 		{
-			fileProvider.IsFileExist(Arg.Any<string>()).Returns(true);
+			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
 			var actual = testObj.Parse(Array.Empty<string>());
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
@@ -30,7 +30,7 @@ namespace Gzipper.Unit.Tests
 		[Test]
 		public void InputParse_WhenArgumentHasNull_ShouldReturnError()
 		{
-			fileProvider.IsFileExist(Arg.Any<string>()).Returns(true);
+			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
 			var actual = testObj.Parse(new []{ "compress", "path", null});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
@@ -39,7 +39,7 @@ namespace Gzipper.Unit.Tests
 		[Test]
 		public void InputParse_WhenWrongOperation_ShouldReturnError()
 		{
-			fileProvider.IsFileExist(Arg.Any<string>()).Returns(true);
+			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
 			var actual = testObj.Parse(new []{ "magic", "path", "path"});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
@@ -49,7 +49,7 @@ namespace Gzipper.Unit.Tests
 		[Test]
 		public void InputParse_WhenWrongInputFile_ShouldReturnError()
 		{
-			fileProvider.IsFileExist(Arg.Any<string>()).Returns(false);
+			_fileService.IsFileExist(Arg.Any<string>()).Returns(false);
 			var actual = testObj.Parse(new []{ "compress", "path", "path"});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
@@ -59,7 +59,7 @@ namespace Gzipper.Unit.Tests
 		[Test]
 		public void InputParse_WhenGoodArgument_ShouldReturnSuccess()
 		{
-			fileProvider.IsFileExist(Arg.Any<string>()).Returns(true);
+			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
 			var expected = new []{ "compress", "inputPath", "outputPath"};
 			var actual = testObj.Parse(expected);
 			actual.IsFail.Should().BeFalse();
@@ -68,6 +68,5 @@ namespace Gzipper.Unit.Tests
 			actual.InputFilePath.Should().Be(expected[1]);
 			actual.OutputFilePath.Should().Be(expected[2]);
 		}
-
 	}
 }

@@ -2,7 +2,7 @@ namespace Gzipper.Input
 {
 	public class InputModel
 	{
-		private InputModel(OperationType operationType, string? inputFilePath, string? outputFilePath, string errorMessage)
+		private InputModel(OperationType operationType, string? inputFilePath, string? outputFilePath, string? errorMessage)
 		{
 			OperationType = operationType;
 			InputFilePath = inputFilePath;

@@ -4,15 +4,15 @@ namespace Gzipper.Input
 {
 	public class InputParser
 	{
-		private readonly IFileProvider _fileProvider;
+		private readonly IFileService _fileService;
 		private const string Compress = "compress";
-		private const string Decompress = "decomopress";
+		private const string Decompress = "decompress";
 
-		private readonly string[] operations = {Compress, Decompress};
+		private readonly string[] _operations = {Compress, Decompress};
 
-		public InputParser(IFileProvider fileProvider)
+		public InputParser(IFileService fileService)
 		{
-			_fileProvider = fileProvider;
+			_fileService = fileService;
 		}
 
 		public InputModel Parse(string[] args)
@@ -20,7 +20,7 @@ namespace Gzipper.Input
 			if (args == null || args.Length != 3 || args.Any(string.IsNullOrEmpty))
 			{
 				return InputModel.Fail("Cmd arguments is not correct. " +
-									   $"Put arguments like: Gzipper {string.Join("/", operations)} " +
+									   $"Put arguments like: Gzipper {string.Join("/", _operations)} " +
 									   "input_file_path output_file_path");
 			}
 
@@ -28,10 +28,10 @@ namespace Gzipper.Input
 			if (operationType == OperationType.None)
 			{
 				return InputModel.Fail($"This operation type: {operationType} is not supported. " +
-									   $"Supported operations {string.Join(",", operations)}");
+									   $"Supported operations {string.Join(",", _operations)}");
 			}
 
-			if (!_fileProvider.IsFileExist(args[1]))
+			if (!_fileService.IsFileExist(args[1]))
 			{
 				return InputModel.Fail($"Input file has not found: {args[1]}");
 			}
@@ -39,7 +39,7 @@ namespace Gzipper.Input
 			return InputModel.Success(operationType, args[1], args[2]);
 		}
 
-		private OperationType GetOperation(string operationArg)
+		private static OperationType GetOperation(string operationArg)
 		{
 			return operationArg switch
 			{

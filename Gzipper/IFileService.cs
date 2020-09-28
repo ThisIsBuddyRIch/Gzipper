@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Gzipper
 {
-	public interface IFileProvider
+	public interface IFileService
 	{
 		bool IsFileExist(string path);
 		BinaryReader GetReader(string path);
