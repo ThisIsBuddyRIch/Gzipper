@@ -1,10 +1,10 @@
 using System;
 using Gzipper.Content;
-using Gzipper.Logger;
+using Gzipper.Infra.Logger;
 
 namespace Gzipper.Gzip
 {
-	public  class ChunkProcessor : IChunkProcessor
+	public class ChunkProcessor : IChunkProcessor
 	{
 		private readonly IContentProcessor _contentProcessor;
 		private readonly ILogger _logger;
@@ -15,10 +15,10 @@ namespace Gzipper.Gzip
 			_logger = logger;
 		}
 
-		public void ProcessChunks(BlockingDictionary<int, byte[]> inputDictionary, BlockingDictionary<int, byte[]> outputDictionary)
+		public void ProcessChunks(BlockingDictionary<int, byte[]> inputDictionary,
+			BlockingDictionary<int, byte[]> outputDictionary)
 		{
 			while (!inputDictionary.IsComplete())
-			{
 				try
 				{
 					var (id, chunk) = inputDictionary.GetFirstItem();
@@ -30,7 +30,6 @@ namespace Gzipper.Gzip
 				{
 					break;
 				}
-			}
 		}
 	}
 }

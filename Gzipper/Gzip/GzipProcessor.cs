@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Gzipper.Content;
 using Gzipper.Content.Readers;
 using Gzipper.Content.Writers;
-using Gzipper.Input;
-using Gzipper.Logger;
+using Gzipper.Infra;
+using Gzipper.Infra.Logger;
 
 namespace Gzipper.Gzip
 {
@@ -57,18 +56,12 @@ namespace Gzipper.Gzip
 			var writerThread = new Thread(() => _writer.Write(outputDictionary, binaryWriter));
 
 			readerThread.Start();
-			foreach (var thread in workerThreads)
-			{
-				thread.Start();
-			}
+			foreach (var thread in workerThreads) thread.Start();
 			writerThread.Start();
 			readerThread.Join();
 			inputDictionary.Close();
 
-			foreach (var thread in workerThreads)
-			{
-				thread.Join();
-			}
+			foreach (var thread in workerThreads) thread.Join();
 
 			outputDictionary.Close();
 			writerThread.Join();

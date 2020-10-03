@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,10 +28,7 @@ namespace Gzipper
 		public void Add(TKey key, TValue value)
 		{
 			EnsureNotDisposed();
-			if (_isClose)
-			{
-				throw new InvalidOperationException("Cant produce to closed pipe");
-			}
+			if (_isClose) throw new InvalidOperationException("Cant produce to closed pipe");
 
 			_freeNodes.Wait();
 			lock (_locker)
@@ -67,10 +63,8 @@ namespace Gzipper
 				if (result == null)
 				{
 					if (dictionary.Count == _maxSize)
-					{
 						throw new ApplicationException($"Can't find item by key {key} and dict is full! " +
 						                               $"Extend max size {_maxSize}");
-					}
 
 					Monitor.Exit(_locker);
 					_event.WaitOne(100);
@@ -79,11 +73,10 @@ namespace Gzipper
 			}
 		}
 
-		private (TKey, TValue) Get(Func< IDictionary<TKey, TValue>, (TKey, TValue)> getter)
+		private (TKey, TValue) Get(Func<IDictionary<TKey, TValue>, (TKey, TValue)> getter)
 		{
 			EnsureNotDisposed();
 			if (!_cancellationTokenSource.IsCancellationRequested)
-			{
 				try
 				{
 					_occupiedNodes.Wait(_cancellationTokenSource.Token);
@@ -91,21 +84,17 @@ namespace Gzipper
 				catch (OperationCanceledException)
 				{
 				}
-			}
 
 			lock (_locker)
 			{
 				if (_isClose)
 				{
-					if (_dictionary.Count == 0)
-					{
-						throw new InvalidOperationException("Pipe is empty");
-					}
+					if (_dictionary.Count == 0) throw new InvalidOperationException("Pipe is empty");
 
 					return getter(_dictionary);
 				}
 
-				var result =  getter(_dictionary);
+				var result = getter(_dictionary);
 				_freeNodes.Release();
 				return result;
 			}
@@ -144,10 +133,7 @@ namespace Gzipper
 
 		public void Dispose()
 		{
-			if (!_isDisposed)
-			{
-				return;
-			}
+			if (!_isDisposed) return;
 
 			_freeNodes.Dispose();
 			_occupiedNodes.Dispose();
@@ -158,10 +144,7 @@ namespace Gzipper
 
 		private void EnsureNotDisposed()
 		{
-			if (_isDisposed)
-			{
-				throw new InvalidOperationException("Pipe has been disposed");
-			}
+			if (_isDisposed) throw new InvalidOperationException("Pipe has been disposed");
 		}
 	}
 }

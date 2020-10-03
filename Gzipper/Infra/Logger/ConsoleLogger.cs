@@ -1,6 +1,6 @@
 using System;
 
-namespace Gzipper.Logger
+namespace Gzipper.Infra.Logger
 {
 	public class ConsoleLogger : ILogger
 	{

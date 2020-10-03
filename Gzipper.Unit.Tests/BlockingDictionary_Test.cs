@@ -9,7 +9,6 @@ namespace Gzipper.Unit.Tests
 {
 	public class BlockingDictionary_Test
 	{
-
 		[Test]
 		[Repeat(100)]
 		[TestCase(2)]
@@ -31,17 +30,11 @@ namespace Gzipper.Unit.Tests
 					.Select(_ => new Thread(() => Consume(actual))));
 
 			produceThread.Start();
-			foreach (var thread in consumeThreads)
-			{
-				thread.Start();
-			}
+			foreach (var thread in consumeThreads) thread.Start();
 
 			produceThread.Join();
 			actual.Close();
-			foreach (var thread in consumeThreads)
-			{
-				thread.Join();
-			}
+			foreach (var thread in consumeThreads) thread.Join();
 
 			Assert.That(actual.Size(), Is.EqualTo(0));
 		}
@@ -65,36 +58,23 @@ namespace Gzipper.Unit.Tests
 			var consumeThread = new Thread(() => ConsumeByKey(blockingDictionary, result));
 
 			consumeThread.Start();
-			foreach (var thread in produceThreads)
-			{
-				thread.Start();
-			}
+			foreach (var thread in produceThreads) thread.Start();
 
-			foreach (var thread in produceThreads)
-			{
-				thread.Join();
-			}
+			foreach (var thread in produceThreads) thread.Join();
 			blockingDictionary.Close();
 			consumeThread.Join();
-			foreach (var i in expectedData)
-			{
-				i.ToString().Should().Be(result[i]);
-			}
+			foreach (var i in expectedData) i.ToString().Should().Be(result[i]);
 		}
 
 		private void Produce(BlockingDictionary<int, string> blockingDictionary, int[] data)
 		{
-			foreach (var i in data)
-			{
-				blockingDictionary.Add(i, i.ToString());
-			}
+			foreach (var i in data) blockingDictionary.Add(i, i.ToString());
 		}
 
 		private void ConsumeByKey(BlockingDictionary<int, string> blockingDictionary, List<string> result)
 		{
 			var key = 0;
 			while (!blockingDictionary.IsComplete())
-			{
 				try
 				{
 					result.Add(blockingDictionary.GetByKey(key));
@@ -104,14 +84,11 @@ namespace Gzipper.Unit.Tests
 				{
 					break;
 				}
-
-			}
 		}
 
 		private void Consume(BlockingDictionary<int, string> blockingPipe)
 		{
 			while (!blockingPipe.IsComplete())
-			{
 				try
 				{
 					blockingPipe.GetFirstItem();
@@ -120,9 +97,6 @@ namespace Gzipper.Unit.Tests
 				{
 					break;
 				}
-			}
 		}
 	}
-
-
 }

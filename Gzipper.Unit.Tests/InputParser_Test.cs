@@ -31,7 +31,7 @@ namespace Gzipper.Unit.Tests
 		public void InputParse_WhenArgumentHasNull_ShouldReturnError()
 		{
 			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
-			var actual = testObj.Parse(new []{ "compress", "path", null});
+			var actual = testObj.Parse(new[] {"compress", "path", null});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
 		}
@@ -40,7 +40,7 @@ namespace Gzipper.Unit.Tests
 		public void InputParse_WhenWrongOperation_ShouldReturnError()
 		{
 			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
-			var actual = testObj.Parse(new []{ "magic", "path", "path"});
+			var actual = testObj.Parse(new[] {"magic", "path", "path"});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
 			actual.ErrorMessage.Should().Contain("Supported operations");
@@ -50,7 +50,7 @@ namespace Gzipper.Unit.Tests
 		public void InputParse_WhenWrongInputFile_ShouldReturnError()
 		{
 			_fileService.IsFileExist(Arg.Any<string>()).Returns(false);
-			var actual = testObj.Parse(new []{ "compress", "path", "path"});
+			var actual = testObj.Parse(new[] {"compress", "path", "path"});
 			actual.IsFail.Should().BeTrue();
 			actual.ErrorMessage.Should().NotBeEmpty();
 			actual.ErrorMessage.Should().Contain("Input file has not found");
@@ -60,7 +60,7 @@ namespace Gzipper.Unit.Tests
 		public void InputParse_WhenGoodArgument_ShouldReturnSuccess()
 		{
 			_fileService.IsFileExist(Arg.Any<string>()).Returns(true);
-			var expected = new []{ "compress", "inputPath", "outputPath"};
+			var expected = new[] {"compress", "inputPath", "outputPath"};
 			var actual = testObj.Parse(expected);
 			actual.IsFail.Should().BeFalse();
 			actual.ErrorMessage.Should().BeNullOrEmpty();

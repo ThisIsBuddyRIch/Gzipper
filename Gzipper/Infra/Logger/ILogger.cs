@@ -1,4 +1,4 @@
-namespace Gzipper.Logger
+namespace Gzipper.Infra.Logger
 {
 	public interface ILogger
 	{

@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.IO;
-using Gzipper.Logger;
+using Gzipper.Infra;
+using Gzipper.Infra.Logger;
 
 namespace Gzipper.Content.Readers
 {
@@ -7,11 +9,13 @@ namespace Gzipper.Content.Readers
 	{
 		private readonly ILogger _logger;
 		private readonly int _chunkSize;
+		private readonly Stopwatch _timer;
 
-		public ContentReader(ILogger logger, int chunkSize)
+		public ContentReader(ILogger logger, int chunkSize, TimerProvider timerProvider)
 		{
 			_logger = logger;
 			_chunkSize = chunkSize;
+			_timer = timerProvider.CreateTimer("Read From I/O");
 		}
 
 		public void Read(BlockingDictionary<int, byte[]> dictionary, BinaryReader reader)
@@ -20,7 +24,9 @@ namespace Gzipper.Content.Readers
 
 			while (reader.BaseStream.Length != reader.BaseStream.Position)
 			{
+				_timer.Start();
 				var content = reader.ReadBytes(_chunkSize);
+				_timer.Stop();
 				dictionary.Add(i, content);
 				_logger.Write($"Read chunk {i}");
 				i++;

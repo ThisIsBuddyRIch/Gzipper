@@ -18,23 +18,16 @@ namespace Gzipper.Input
 		public InputModel Parse(string[] args)
 		{
 			if (args == null || args.Length != 3 || args.Any(string.IsNullOrEmpty))
-			{
 				return InputModel.Fail("Cmd arguments is not correct. " +
-									   $"Put arguments like: Gzipper {string.Join("/", _operations)} " +
-									   "input_file_path output_file_path");
-			}
+				                       $"Put arguments like: Gzipper {string.Join("/", _operations)} " +
+				                       "input_file_path output_file_path");
 
 			var operationType = GetOperation(args[0]);
 			if (operationType == OperationType.None)
-			{
 				return InputModel.Fail($"This operation type: {operationType} is not supported. " +
-									   $"Supported operations {string.Join(",", _operations)}");
-			}
+				                       $"Supported operations {string.Join(",", _operations)}");
 
-			if (!_fileService.IsFileExist(args[1]))
-			{
-				return InputModel.Fail($"Input file has not found: {args[1]}");
-			}
+			if (!_fileService.IsFileExist(args[1])) return InputModel.Fail($"Input file has not found: {args[1]}");
 
 			return InputModel.Success(operationType, args[1], args[2]);
 		}

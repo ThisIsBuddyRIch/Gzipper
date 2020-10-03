@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
+using Gzipper.Infra;
+using Gzipper.Infra.Logger;
 using Gzipper.Input;
-using Gzipper.Logger;
 using Microsoft.Extensions.Configuration;
 
 namespace Gzipper
@@ -11,9 +11,10 @@ namespace Gzipper
 		public static int Main(string[] args)
 		{
 			var logger = new ConsoleLogger();
+			var timerProvider = new TimerProvider();
 			try
 			{
-				var stopwatch = new Stopwatch();
+				var stopwatch = timerProvider.CreateTimer("total");
 				stopwatch.Start();
 				var fileService = new FileService();
 				var inputParser = new InputParser(new FileService());
@@ -25,19 +26,16 @@ namespace Gzipper
 					return 1;
 				}
 
-				var settings = new ConfigurationBuilder()
-					.AddJsonFile("appsettings.json", false, false)
-					.Build()
-					.GetSection("settings")
-					.Get<Settings>();
+				var settings = GetSettings();
 
-				var gzipProcessorFactory = new GzipProcessorFactory(fileService, logger, settings);
+				var gzipProcessorFactory = new GzipProcessorFactory(fileService, logger, settings, timerProvider);
 				logger.Write($"--- Start process with settings {settings} ---");
 				gzipProcessorFactory
 					.Create(inputParseResult.OperationType)
 					.Process(inputParseResult.InputFilePath!, inputParseResult.OutputFilePath!);
 				stopwatch.Stop();
-				logger.Write($"--- Finish process {stopwatch.Elapsed} ---");
+				logger.Write(timerProvider.GetReport());
+				logger.Write($"--- Finish process ---");
 				return 0;
 			}
 			catch (Exception e)
@@ -45,6 +43,15 @@ namespace Gzipper
 				logger.Write($"Something went wrong: {e.Message}");
 				return 1;
 			}
+		}
+
+		private static Settings GetSettings()
+		{
+			return new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", false, false)
+				.Build()
+				.GetSection("settings")
+				.Get<Settings>();
 		}
 	}
 }

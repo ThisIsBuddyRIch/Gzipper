@@ -2,11 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
-using Gzipper.Content;
-using Gzipper.Gzip;
+using Gzipper.Infra;
+using Gzipper.Infra.Logger;
 using Gzipper.Input;
-using Gzipper.Logger;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -37,14 +35,16 @@ namespace Gzipper.Unit.Tests
 			var gzipProcessorFactory = new GzipProcessorFactory(
 				_fileService,
 				new ConsoleLogger(),
-				new Settings(8, 1000, 2000, 10));
+				new Settings(8, 1000, 2000, 10),
+				new TimerProvider());
 			gzipProcessorFactory
 				.Create(OperationType.Compress)
 				.Process(compressFilePath, compressFilePath);
 
 			const string decompressFilePath = "decompress";
 			using var actualDecompressedData = new MemoryStream();
-			_fileService.GetReader(decompressFilePath).Returns(new BinaryReader(new MemoryStream(compressedData.ToArray())));
+			_fileService.GetReader(decompressFilePath)
+				.Returns(new BinaryReader(new MemoryStream(compressedData.ToArray())));
 			_fileService.GetWriter(decompressFilePath).Returns(new BinaryWriter(actualDecompressedData));
 
 			try
@@ -52,12 +52,12 @@ namespace Gzipper.Unit.Tests
 				gzipProcessorFactory
 					.Create(OperationType.Decompress)
 					.Process(decompressFilePath, decompressFilePath);
-
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
 			}
+
 			// compressedData.ToArray().Should().NotBeEmpty();
 			// actualDecompressedData.ToArray().Should().NotBeEmpty();
 			// Convert.ToBase64String(actualDecompressedData.ToArray()).Should()
