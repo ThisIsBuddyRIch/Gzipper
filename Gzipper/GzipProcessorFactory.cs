@@ -12,7 +12,7 @@ namespace Gzipper
 	{
 		private readonly IFileService _fileService;
 		private readonly ILogger _logger;
-		private readonly int chunkSize = 1024 * 1024;
+		private readonly int chunkSize = 10;
 
 		public GzipProcessorFactory(IFileService fileService, ILogger logger)
 		{

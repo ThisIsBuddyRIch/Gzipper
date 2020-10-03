@@ -21,6 +21,8 @@ namespace Gzipper.Integration.Test
 			Convert.ToBase64String(File.ReadAllBytes(inputFileName))
 				.Should()
 				.Be(Convert.ToBase64String(File.ReadAllBytes(decompressedFileName)));
+			File.Delete(decompressedFileName);
+			File.Delete(compressedFileName);
 		}
 	}
 }
