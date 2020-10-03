@@ -36,12 +36,12 @@ namespace Gzipper.Gzip
 
 		public void Process(string inputFilePath, string outputFilePath)
 		{
-			using var inputDictionary = new BlockingDictionary<int, Chunk>(
+			using var inputDictionary = new BlockingDictionary<int, byte[]>(
 				_settings.InputBufferSize,
-				new SortedDictionary<int, Chunk>(new Dictionary<int, Chunk>(_settings.InputBufferSize)));
-			using var outputDictionary = new BlockingDictionary<int, Chunk>(
+				new SortedDictionary<int, byte[]>(new Dictionary<int, byte[]>(_settings.InputBufferSize)));
+			using var outputDictionary = new BlockingDictionary<int, byte[]>(
 				_settings.OutputBufferSize,
-				new Dictionary<int, Chunk>(_settings.OutputBufferSize));
+				new Dictionary<int, byte[]>(_settings.OutputBufferSize));
 			var workerThreads = new List<Thread>();
 
 			_logger.Write($"Start processing with parallelism level {_settings.ParallelismLevel}");

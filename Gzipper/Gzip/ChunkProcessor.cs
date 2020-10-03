@@ -15,15 +15,15 @@ namespace Gzipper.Gzip
 			_logger = logger;
 		}
 
-		public void ProcessChunks(BlockingDictionary<int, Chunk> inputDictionary, BlockingDictionary<int, Chunk> outputDictionary)
+		public void ProcessChunks(BlockingDictionary<int, byte[]> inputDictionary, BlockingDictionary<int, byte[]> outputDictionary)
 		{
 			while (!inputDictionary.IsComplete())
 			{
 				try
 				{
 					var (id, chunk) = inputDictionary.GetFirstItem();
-					var processedChunk = _contentProcessor.Process(chunk.Content);
-					outputDictionary.Add(id, new Chunk(processedChunk));
+					var processedChunk = _contentProcessor.Process(chunk);
+					outputDictionary.Add(id, processedChunk);
 					_logger.Write($"Process chunk {id}");
 				}
 				catch (InvalidOperationException)

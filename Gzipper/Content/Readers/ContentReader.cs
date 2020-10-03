@@ -14,14 +14,14 @@ namespace Gzipper.Content.Readers
 			_chunkSize = chunkSize;
 		}
 
-		public void Read(BlockingDictionary<int, Chunk> dictionary, BinaryReader reader)
+		public void Read(BlockingDictionary<int, byte[]> dictionary, BinaryReader reader)
 		{
 			var i = 0;
 
 			while (reader.BaseStream.Length != reader.BaseStream.Position)
 			{
 				var content = reader.ReadBytes(_chunkSize);
-				dictionary.Add(i, new Chunk(content));
+				dictionary.Add(i, content);
 				_logger.Write($"Read chunk {i}");
 				i++;
 			}

@@ -14,7 +14,7 @@ namespace Gzipper.Content.Writers
 			_logger = logger;
 		}
 
-		public void Write(BlockingDictionary<int, Chunk> outputDictionary, BinaryWriter binaryWriter)
+		public void Write(BlockingDictionary<int, byte[]> outputDictionary, BinaryWriter binaryWriter)
 		{
 			var id = 0;
 			while (!outputDictionary.IsComplete())
@@ -22,9 +22,9 @@ namespace Gzipper.Content.Writers
 				try
 				{
 					var chunk = outputDictionary.GetByKey(id);
-					var contentToWrite = BitConverter.GetBytes(chunk.Content.Length).Concat(chunk.Content).ToArray();
+					var contentToWrite = BitConverter.GetBytes(chunk.Length).Concat(chunk).ToArray();
 					binaryWriter.Write(contentToWrite);
-					_logger.Write($"Write compressed chunk {id}, length {chunk.Content.Length}");
+					_logger.Write($"Write compressed chunk {id}, length {chunk.Length}");
 					id++;
 				}
 				catch (InvalidOperationException)

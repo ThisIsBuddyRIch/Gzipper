@@ -13,7 +13,7 @@ namespace Gzipper.Content.Writers
 			_logger = logger;
 		}
 
-		public void Write(BlockingDictionary<int, Chunk> outputDictionary, BinaryWriter binaryWriter)
+		public void Write(BlockingDictionary<int, byte[]> outputDictionary, BinaryWriter binaryWriter)
 		{
 			var id = 0;
 			while (!outputDictionary.IsComplete())
@@ -21,7 +21,7 @@ namespace Gzipper.Content.Writers
 				try
 				{
 					var chunk = outputDictionary.GetByKey(id);
-					binaryWriter.Write(chunk.Content);
+					binaryWriter.Write(chunk);
 					_logger.Write($"Write chunk {id}");
 					id++;
 				}
