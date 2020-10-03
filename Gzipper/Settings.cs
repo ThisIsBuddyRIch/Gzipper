@@ -1,7 +1,15 @@
+using Newtonsoft.Json;
+
 namespace Gzipper
 {
+	[JsonObject("settings")]
 	public class Settings
 	{
+		[JsonConstructor]
+		public Settings()
+		{
+		}
+
 		public Settings(int parallelismLevel, int inputBufferSize, int outputBufferSize, int chunkSize)
 		{
 			ParallelismLevel = parallelismLevel;
@@ -10,13 +18,17 @@ namespace Gzipper
 			ChunkSize = chunkSize;
 		}
 
-		public int ParallelismLevel { get; }
+		[JsonProperty("parallelismLevel")]
+		public int ParallelismLevel { get; set; }
 
-		public int InputBufferSize { get; }
+		[JsonProperty("inputBufferSize")]
+		public int InputBufferSize { get; set; }
 
-		public int OutputBufferSize { get; }
+		[JsonProperty("outputBufferSize")]
+		public int OutputBufferSize { get; set; }
 
-		public int ChunkSize { get; }
+		[JsonProperty("chunkSize")]
+		public int ChunkSize { get; set; }
 
 		public override string ToString()
 		{

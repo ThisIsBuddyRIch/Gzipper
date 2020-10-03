@@ -7,9 +7,10 @@ namespace Gzipper.Content
 	{
 		public byte[] Process(byte[] content)
 		{
+			using var sourceStream = new MemoryStream(content);
 			using var targetStream = new MemoryStream();
-			using var compressionStream = new GZipStream(targetStream, CompressionMode.Compress);
-			compressionStream.Write(content, 0, content.Length);
+			using GZipStream compressionStream = new GZipStream(targetStream, CompressionMode.Compress);
+			sourceStream.CopyTo(compressionStream);
 			compressionStream.Close();
 			return targetStream.ToArray();
 		}

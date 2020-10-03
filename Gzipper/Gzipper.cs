@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using Gzipper.Content;
-using Gzipper.Gzip;
 using Gzipper.Input;
 using Gzipper.Logger;
+using Microsoft.Extensions.Configuration;
 
 namespace Gzipper
 {
@@ -26,7 +25,12 @@ namespace Gzipper
 					return 1;
 				}
 
-				var settings = new Settings(8, 1000, 2000, 1024 * 1024);
+				var settings = new ConfigurationBuilder()
+					.AddJsonFile("appsettings.json", false, false)
+					.Build()
+					.GetSection("settings")
+					.Get<Settings>();
+
 				var gzipProcessorFactory = new GzipProcessorFactory(fileService, logger, settings);
 				logger.Write($"--- Start process with settings {settings} ---");
 				gzipProcessorFactory

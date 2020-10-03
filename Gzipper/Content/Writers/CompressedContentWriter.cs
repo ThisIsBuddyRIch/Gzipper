@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Gzipper.Logger;
 
 namespace Gzipper.Content.Writers
@@ -21,8 +22,8 @@ namespace Gzipper.Content.Writers
 				try
 				{
 					var chunk = outputDictionary.GetByKey(id);
-					binaryWriter.Write(chunk.Content.Length);
-					binaryWriter.Write(chunk.Content);
+					var contentToWrite = BitConverter.GetBytes(chunk.Content.Length).Concat(chunk.Content).ToArray();
+					binaryWriter.Write(contentToWrite);
 					_logger.Write($"Write compressed chunk {id}, length {chunk.Content.Length}");
 					id++;
 				}
