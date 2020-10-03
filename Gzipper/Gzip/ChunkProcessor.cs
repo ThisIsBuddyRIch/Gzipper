@@ -9,10 +9,10 @@ namespace Gzipper.Gzip
 		private readonly IContentProcessor _contentProcessor;
 		private readonly ILogger _logger;
 
-		public ChunkProcessor(IContentProcessor contentProcessor, ILogger _logger)
+		public ChunkProcessor(IContentProcessor contentProcessor, ILogger logger)
 		{
 			_contentProcessor = contentProcessor;
-			this._logger = _logger;
+			_logger = logger;
 		}
 
 		public void ProcessChunks(BlockingDictionary<int, Chunk> inputDictionary, BlockingDictionary<int, Chunk> outputDictionary)

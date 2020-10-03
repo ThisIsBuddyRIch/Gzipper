@@ -26,8 +26,9 @@ namespace Gzipper
 					return 1;
 				}
 
-				var gzipProcessorFactory = new GzipProcessorFactory(fileService, logger);
-				logger.Write("--- Start process ---");
+				var settings = new Settings(8, 1000, 2000, 1024 * 1024);
+				var gzipProcessorFactory = new GzipProcessorFactory(fileService, logger, settings);
+				logger.Write($"--- Start process with settings {settings} ---");
 				gzipProcessorFactory
 					.Create(inputParseResult.OperationType)
 					.Process(inputParseResult.InputFilePath!, inputParseResult.OutputFilePath!);

@@ -34,7 +34,10 @@ namespace Gzipper.Unit.Tests
 			const string compressFilePath = "compress";
 			_fileService.GetReader(compressFilePath).Returns(new BinaryReader(expectedDecompressedData));
 			_fileService.GetWriter(compressFilePath).Returns(new BinaryWriter(compressedData));
-			var gzipProcessorFactory = new GzipProcessorFactory(_fileService, new ConsoleLogger());
+			var gzipProcessorFactory = new GzipProcessorFactory(
+				_fileService,
+				new ConsoleLogger(),
+				new Settings(8, 1000, 2000, 10));
 			gzipProcessorFactory
 				.Create(OperationType.Compress)
 				.Process(compressFilePath, compressFilePath);

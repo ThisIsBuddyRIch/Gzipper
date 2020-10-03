@@ -16,41 +16,41 @@ namespace Gzipper.Gzip
 		private readonly IContentReader _reader;
 		private readonly IContentWriter _writer;
 		private readonly IChunkProcessor _processor;
-		private const int ParallelismLevel = 8;
-		private const int InputMaxBufferSize = 1000;
-		private const int OutputMaxBufferSize = 2000;
+		private readonly Settings _settings;
 
 		public GzipProcessor(
 			IFileService fileService,
 			ILogger logger,
 			IContentReader reader,
 			IContentWriter writer,
-			IChunkProcessor processor)
+			IChunkProcessor processor,
+			Settings settings)
 		{
 			_fileService = fileService;
 			_logger = logger;
 			_reader = reader;
 			_writer = writer;
 			_processor = processor;
+			_settings = settings;
 		}
 
 		public void Process(string inputFilePath, string outputFilePath)
 		{
 			using var inputDictionary = new BlockingDictionary<int, Chunk>(
-				InputMaxBufferSize,
-				new SortedDictionary<int, Chunk>(new Dictionary<int, Chunk>()));
+				_settings.InputBufferSize,
+				new SortedDictionary<int, Chunk>(new Dictionary<int, Chunk>(_settings.InputBufferSize)));
 			using var outputDictionary = new BlockingDictionary<int, Chunk>(
-				OutputMaxBufferSize,
-				new Dictionary<int, Chunk>(OutputMaxBufferSize));
+				_settings.OutputBufferSize,
+				new Dictionary<int, Chunk>(_settings.OutputBufferSize));
 			var workerThreads = new List<Thread>();
 
-			_logger.Write($"Start processing with parallelism level {ParallelismLevel}");
+			_logger.Write($"Start processing with parallelism level {_settings.ParallelismLevel}");
 
 			using var binaryReader = _fileService.GetReader(inputFilePath);
 			var readerThread = new Thread(() => _reader.Read(inputDictionary, binaryReader));
 
 			workerThreads.AddRange(
-				Enumerable.Range(0, ParallelismLevel)
+				Enumerable.Range(0, _settings.ParallelismLevel)
 					.Select(_ => new Thread(() => _processor.ProcessChunks(inputDictionary, outputDictionary))));
 
 			using var binaryWriter = _fileService.GetWriter(outputFilePath);
